@@ -1,37 +1,37 @@
 #include <Wire.h>
 #include <LIDARLite.h>
+#include <Servo.h>
 
-// Globals
+//Global variables
 LIDARLite lidarLite;
 int cal_cnt = 0;
+const int servoPin = 10;
+Servo lidarServo;
+int lidarAngle = 0;
 
 void setup()
 {
-  Serial.begin(9600); // Initialize serial connection to display distance readings
-
+  Serial.begin(9600); // Initialize serial connection to Raspberry Pi
   lidarLite.begin(0, true); // Set configuration to default and I2C to 400 kHz
-  lidarLite.configure(0); // Change this number to try out alternate configurations
-}
+  lidarLite.configure(0);
+  lidarServo.attach(servoPin);
 
 void loop()
 {
   int dist;
+  for (lidarAngle = 0; lidarAngle <= 180; lidarAngle +=5) {
+      if ( cal_cnt == 0 ) {
+        dist = lidarLite.distance();      // With bias correction
+      } else {
+        dist = lidarLite.distance(false); // Without bias correction
+      }
+      // Increment reading counter
+      cal_cnt++;
+      cal_cnt = cal_cnt % 100;
 
-  // At the beginning of every 100 readings,
-  // take a measurement with receiver bias correction
-  if ( cal_cnt == 0 ) {
-    dist = lidarLite.distance();      // With bias correction
-  } else {
-    dist = lidarLite.distance(false); // Without bias correction
+      // Display distance and lidarAngle for 2D obstacle map construction
+      Serial.print(dist);
+      Serial.print(lidarAngle);
+      delay(10);
   }
-
-  // Increment reading counter
-  cal_cnt++;
-  cal_cnt = cal_cnt % 100;
-
-  // Display distance
-  Serial.print(dist);
-  Serial.println(" cm");
-
-  delay(10);
 }
