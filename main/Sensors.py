@@ -5,7 +5,7 @@ gpsArduino = serial.Serial('COM5', 9600, timeout = .1)
 LiDARArduino = serial.Serial('COM6', 9600, timeout = .1)
 
 gpsData = []
-LiDARArduino = []
+LiDARData = []
 timeData = []
 
 while True:
@@ -15,5 +15,6 @@ while True:
         gpsData.append(float(gps)) # Append a data to your declared list
         print gpsData
     if LiDAR:
-        LiDARData.append(float(gps)) # Append a data to your declared list
-        print gpsData
+        LiDARData.append(float(LiDAR)) # Append a data to your declared list
+        print LiDARData
+
